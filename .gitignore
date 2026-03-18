@@ -1,0 +1,38 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.pytest_cache/
+.mypy_cache/
+.coverage
+.ruff_cache/
+
+# Virtual environments
+.venv/
+
+# Secrets
+.env
+
+# Sample data
+sample/
+knowledge_files/
+
+# Local tooling outputs
+.playwright-mcp/
+
+# Presentation files (personal)
+presentation/
+
+# Claude Code project instructions (personal)
+CLAUDE.md
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc

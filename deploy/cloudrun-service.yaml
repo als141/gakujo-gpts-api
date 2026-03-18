@@ -1,0 +1,54 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: gakujo-gpts-api
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "2"
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      containerConcurrency: 1
+      timeoutSeconds: 300
+      serviceAccountName: gakujo-gpts-api@PROJECT_ID.iam.gserviceaccount.com
+      containers:
+        - image: REGION-docker.pkg.dev/PROJECT_ID/REPOSITORY/gakujo-gpts-api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DEBUG
+              value: "false"
+            - name: SERVER_URL
+              value: "https://gakujo-gpts-api-xxxxx-an.a.run.app"
+            - name: OAUTH_CLIENT_ID
+              value: "gakujo-gpts"
+            - name: ALLOWED_REDIRECT_HOSTS
+              value: "chat.openai.com,chatgpt.com"
+            - name: ALLOWED_HOSTS
+              value: "gakujo-gpts-api-xxxxx-an.a.run.app"
+            - name: RESPONSE_CACHE_TTL_SECONDS
+              value: "0"
+            - name: CAMPUS_MAX_CONCURRENT_REQUESTS
+              value: "1"
+            - name: CAMPUS_MIN_REQUEST_INTERVAL_SECONDS
+              value: "0.5"
+            - name: ALLOW_ENV_CREDENTIALS
+              value: "false"
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: token-secret
+                  key: latest
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth-client-secret
+                  key: latest
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
