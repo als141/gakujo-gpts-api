@@ -118,12 +118,15 @@ async def apply_security_headers(request, call_next):
         )
 
         content_type = response.headers.get("content-type", "").lower()
+        _form_action = "'self'"
+        if settings.server_url:
+            _form_action = f"'self' {settings.server_url}"
         if "text/html" in content_type:
             response.headers.setdefault(
                 "Content-Security-Policy",
-                "default-src 'self'; style-src 'self' 'unsafe-inline'; "
-                "img-src 'self' data:; form-action 'self'; base-uri 'none'; "
-                "frame-ancestors 'none'; object-src 'none'",
+                f"default-src 'self'; style-src 'self' 'unsafe-inline'; "
+                f"img-src 'self' data:; form-action {_form_action}; base-uri 'none'; "
+                f"frame-ancestors 'none'; object-src 'none'",
             )
         else:
             response.headers.setdefault(
