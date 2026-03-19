@@ -152,40 +152,63 @@ async def privacy_policy():
     return HTMLResponse("""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>プライバシーポリシー - 新大学務AIアシスタント</title>
-<style>body{font-family:sans-serif;max-width:700px;margin:40px auto;padding:0 20px;line-height:1.8;color:#333}
-h1{font-size:22px}h2{font-size:17px;margin-top:28px}p{margin:8px 0}</style></head><body>
+<style>
+  body{font-family:sans-serif;max-width:720px;margin:40px auto;padding:0 24px;line-height:1.9;color:#222}
+  h1{font-size:22px;border-bottom:2px solid #333;padding-bottom:8px}
+  h2{font-size:16px;margin-top:32px;color:#444;border-left:4px solid #888;padding-left:10px}
+  p{margin:8px 0}
+  ul{margin:8px 0;padding-left:1.5em}
+  li{margin:4px 0}
+  .updated{color:#666;font-size:13px}
+  .note{background:#f5f5f5;border-radius:6px;padding:10px 14px;font-size:14px;color:#555}
+</style></head><body>
 <h1>プライバシーポリシー</h1>
-<p>最終更新日: 2026年3月17日</p>
+<p class="updated">最終更新日: 2026年3月19日</p>
 
-<h2>1. サービス概要</h2>
+<h2>1. 運営者情報</h2>
+<p>運営者: 新潟大学大学院 自然科学研究科 在籍学生<br>
+お問い合わせ: <a href="https://github.com/als141/gakujo-gpts-api/issues">GitHub Issues</a></p>
+
+<h2>2. サービス概要</h2>
 <p>本サービス「新大学務AIアシスタント」は、新潟大学の学務情報システム（CampusSquare）と連携し、
-学生の学務情報を取得・分析するGPTs Custom Actionsです。</p>
+成績・時間割・出欠・レポート・連絡通知・シラバス等の学務情報を自然言語で取得・分析する
+GPTs Custom Actionsです。</p>
 
-<h2>2. 収集する情報</h2>
-<p>本サービスはOAuth認証を通じて、ユーザーがログインフォームに入力した学務情報システムの認証情報
-（ユーザーID、パスワード、TOTPコード/シークレット）を一時的に処理します。</p>
-
-<h2>3. 情報の利用目的</h2>
-<p>収集した認証情報は、学務情報システムへのログインおよびデータ取得のためにのみ使用します。</p>
-
-<h2>4. 情報の保存</h2>
+<h2>3. 取得する情報と利用目的</h2>
 <ul>
-<li>認証情報はログイン処理完了後、即座にサーバーメモリから消去されます</li>
-<li>認証情報はデータベース・ファイルシステム・トークンに保存されません</li>
-<li>学務データのレスポンス本文はデフォルトでサーバー側にキャッシュ保存しません</li>
-<li>ログイン後はCampusSquareのセッションCookie（JSESSIONID）のみを短時間メモリ保持し、セッション終了後またはサーバー再起動時に削除されます</li>
+<li><strong>認証情報（ユーザーID・パスワード・TOTPコード）</strong>: CampusSquareへのログインのためにのみ使用します。ログイン処理完了後、即座にサーバーメモリから消去されます。</li>
+<li><strong>学務データ（成績・時間割・出欠等）</strong>: ChatGPT上でのユーザーへの応答のためにのみ使用します。</li>
+<li><strong>アクセスログ（IPアドレス・User-Agent）</strong>: セキュリティ管理およびサービス改善のため、Google Cloud Loggingに自動記録されます。</li>
 </ul>
 
-<h2>5. 第三者提供</h2>
-<p>ユーザーの認証情報および学務データを第三者に提供することはありません。
-データはCampusSquareとの通信、およびユーザーが利用するGPTsプラットフォームへの応答にのみ使用されます。</p>
+<h2>4. 情報の保存・キャッシュ</h2>
+<ul>
+<li>認証情報はデータベース・ファイルシステム・発行トークンには一切保存されません。</li>
+<li>ログイン後はCampusSquareのセッションCookie（JSESSIONID）のみをサーバーメモリに保持し、セッション終了またはサーバー再起動時に削除されます。</li>
+<li>取得した学務データはCampusSquareへの負荷軽減のため、最大3分間サーバーのメモリ上にキャッシュされます。キャッシュはメモリ上のみであり、永続的には保存されません。</li>
+</ul>
+
+<h2>5. 第三者への委託</h2>
+<p>本サービスは以下の事業者のインフラを利用しています。ユーザーの個人情報がこれらの事業者に直接提供されることはありませんが、サービス運営上、以下のプラットフォームを経由してデータが処理されます。</p>
+<ul>
+<li><strong>Google LLC（Google Cloud Platform / Cloud Run）</strong>: サーバーホスティングおよびアクセスログの保管</li>
+<li><strong>OpenAI, L.L.C.（ChatGPT / GPTs）</strong>: ユーザーとのインターフェース提供</li>
+</ul>
 
 <h2>6. セキュリティ</h2>
-<p>通信は全てHTTPS（TLS 1.2以上）で暗号化されています。
-トークンはFernet対称暗号で保護され、アプリケーションは no-store ヘッダ・Host制限・SSRF対策・詳細エラーマスクを適用しています。</p>
+<ul>
+<li>通信はすべてHTTPS（TLS 1.2以上）で暗号化されています。</li>
+<li>アクセストークンはFernet対称暗号（AES-128-CBC）で保護されています。</li>
+<li>ソースコードはMITライセンスのもとGitHubにて公開しており、実装の透明性を確保しています。</li>
+</ul>
 
-<h2>7. お問い合わせ</h2>
-<p>本サービスに関するお問い合わせは、GitHubリポジトリのIssuesをご利用ください。</p>
+<h2>7. ユーザーの権利</h2>
+<p>保有する個人データの開示・訂正・削除を希望される場合は、GitHubリポジトリのIssuesよりご連絡ください。サーバー上のセッション情報は再ログインを行わないことで自然に失効します。</p>
+
+<h2>8. ポリシーの変更</h2>
+<p>本ポリシーは予告なく変更されることがあります。変更後は本ページに掲載の最終更新日をもって効力が生じます。</p>
+
+<p class="note">本サービスは個人の学術的取り組みとして提供しており、営利目的ではありません。</p>
 </body></html>""")
 
 
